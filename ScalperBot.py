@@ -795,15 +795,16 @@ def setup():
         print(requiredFolders)
         print('\n')
     global loadCookies
+    global cashLimit
     while True:
         if spreadsheets and loadCookies:
-            actions = ['Add Spreadsheet','Create Cookies','Disable Cookies','Start']
+            actions = ['Add Spreadsheet','Create Cookies','Disable Cookies','Set Buy Limit:' + str(cashLimit),'Start']
         elif spreadsheets and not loadCookies:
-            actions = ['Add Spreadsheet','Create Cookies','Enable Cookies','Start']
+            actions = ['Add Spreadsheet','Create Cookies','Enable Cookies','Set Buy Limit:' + str(cashLimit),'Start']
         elif not spreadsheets and loadCookies:
-            actions = ['Add Spreadsheet','Create Cookies','Disable Cookies']
+            actions = ['Add Spreadsheet','Create Cookies','Disable Cookies','Set Buy Limit:' + str(cashLimit)]
         else:
-            actions = ['Add Spreadsheet','Create Cookies','Enable Cookies']
+            actions = ['Add Spreadsheet','Create Cookies','Enable Cookies','Set Buy Limit:' + str(cashLimit)]
 
         res = userQuestion('Please select an action.',actions,True,'Help')
         if res == 0:
@@ -818,7 +819,11 @@ def setup():
                 print('You have to chose to' + Fore.GREEN +' USE '+ Fore.RESET + 'cookies this will help checkout on websites like NewEgg faster.')
             else:
                 print('You have to chose to' + Fore.RED +' NOT USE '+ Fore.RESET + 'cookies this will disable the ability to checkout on NewEgg.')
+        
         if res == 4:
+            cashLimit = input('Please type the limit of money you are willing to spend: $')
+            print('New buy limit set to ' + Fore.GREEN + cashLimit + Fore.RESET)
+        if res == 5:
             if getDict(checkoutPATH, False) == None:
                 printError('checkout path is invalid make sure you have a checkout.csv file in your Spreadsheets folder')
                 printError('No checkout info, will not be able to buy anything')
