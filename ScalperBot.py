@@ -11,7 +11,7 @@ from datetime import datetime
 #colorama DOCS: https://pypi.org/project/colorama/
 requiredFolders = ['Cookies','Spreadsheets']
 searchMethod = ['link','page']
-versionNumber = '1.1'
+versionNumber = '1.2'
 loadCookies = True
 testingCheckout = False
 testPage = 'https://www.newegg.com/p/pl?d=battery&LeftPriceRange=0+4'
@@ -27,13 +27,14 @@ checkoutPATH = os.path.dirname(os.path.realpath(__file__)) + '\Spreadsheets\chec
 cookiePATH = os.path.dirname(os.path.realpath(__file__)) + '\Cookies\\'
 checkOutInfoDict = {} 
 cashLimit = 850
+rangeFromMSRP =150
 tabDelay = 2
 delay = .5
 #searchMethod = 'byGPUPage'
 filterList = ['3070','3060','3080','3090','3060Ti']
 WebsiteInfo = {
 	'BestBuy' : {'Color' : 'Blue', 'OOSText' : 'Sold Out', 'ISText' : 'Add to Cart', 'cartLink' : 'https://www.bestbuy.com/checkout/r/fast-track', 'shippingButton':'Switch to Shipping', 'checkoutButtonText':'Checkout', 'ccInputID':'optimized-cc-card-number', 'expMonName':'expiration-month', 'expYearName':'expiration-year', 'ccSec':'credit-card-cvv','fNameInputID':'.firstName','lNameInputID':'.lastName','addrInputID':'.street','cityInputID':'.city','stateInputID':'.state','zipInputID':'.zipcode', 'emailInputID':'email', 'phoneInputID':'phone'},
-    'Amazon' : {'Color' : 'Yellow', 'OOSText' : 'NULL', 'ISText' : 'NULL'},
+    'Amazon' : {'Color' : 'Yellow', 'OOSText' : 'NULL', 'ISText' : 'Buy Now', 'cartLink':'https://www.amazon.com/gp/buy/spc/handlers/display.html?hasWorkingJavascript=1'},
 	'NewEgg' : {'Color' : 'Orange', 'OOSText' : 'NULL', 'ISText' : 'Add to cart ', 'emptyCartText':'cart is empty', 'cartLink':'https://secure.newegg.com/shop/cart', 'shippingButton':'Continue With Guest Checkout'},
     'ASUS' : {'Color' : 'Red', 'OOSText' : 'Arrival Notice', 'ISText' : 'Add to Cart', 'cartLink':'https://shop-us1.asus.com/AW000706/checkout', 'shippingButton':'Continue as Guest', 'fNameInputID':'customer-info-1__firstName'}
 	}
@@ -98,8 +99,11 @@ def printError(eMsg):
 '''
 def newTab(browser, gpuDict):
     #if default tab then don't open new one
-    browser.execute_script("window.open('" + gpuDict['URL'] + "');")
+    #browser.execute_script("window.open('" + gpuDict['URL'] + "');")
+    browser.execute_script('''window.open("","_blank");''')
     windowHandle = browser.window_handles[-1]
+    browser.switch_to.window(windowHandle)
+    browser.get(gpuDict['URL'])
     gpuDict['WindowHandle'] = windowHandle
     time.sleep(tabDelay)
     
@@ -171,7 +175,7 @@ def checkout(browser, gpu):
         totalPriceInt = float(totalPrice.replace('$',''))
         if totalPriceInt < cashLimit:
             #REMOVE THIS to buy on bestbuy
-            #browser.find_element_by_class_name('btn-primary').click()
+            browser.find_element_by_class_name('btn-primary').click()
             print(browser.find_element_by_class_name('btn-primary').text)
             purchased(gpu, totalPriceInt)
             cashLimit -= totalPriceInt
@@ -182,7 +186,6 @@ def checkout(browser, gpu):
         else:
             printError('Total GPU price was higher than your cash Limit')
             return False
-
     #END BESTBUY
         
     if gpu['Website'] == 'ASUS':
@@ -190,6 +193,8 @@ def checkout(browser, gpu):
         fNameTextField.click()
         fNameTextField.send_keys(Keys.ARROW_DOWN )
         fNameTextField.send_keys(Keys.ENTER)
+    #END ASUS
+
     if gpu['Website'] == 'NewEgg':
         try:
             searchForElement(browser,'text()','Continue to payment').click()
@@ -236,6 +241,26 @@ def checkout(browser, gpu):
         sendKeysToTextField(browser,'@aria-label','Email',checkOutInfoDict['email'])
         searchForElement(browser,'text()','Save').click
         '''
+    #END NEWEGG
+
+    if gpu['Website'] == 'Amazon':
+        try:
+            totalPrice = browser.find_element_by_class_name('grand-total-price').text.strip()
+            totalPriceFloat = float(totalPrice.replace('$',''))
+            #REMOVE THIS to buy on amazon
+            if totalPriceFloat < cashLimit:
+                #searchForElement(browser,'text()','Place your order').click()
+                print(searchForElement(browser,'text()','Place your order').text)
+                purchased(gpu, totalPriceFloat)
+                input('Press Enter to continue')
+                return True
+            else:
+                printError('out of cashlimit range')
+                return True
+        except Exception as e:
+            print(e)
+            return False
+    
     #browser.find_element_by_xpath('//button[text()="'+ 'Continue to Payment Information' + '"]').click()
     
 
@@ -243,9 +268,10 @@ def checkout(browser, gpu):
 
 def cart(browser, gpu):
     time.sleep(delay)
+    if gpu['Website'] == 'Amazon':
+        time.sleep(delay*2)
     browser.get(WebsiteInfo[gpu['Website']]['cartLink']) #go to the page with your cart
     time.sleep(delay)
-    
     
     #waitForElementToLoad(browser, 'Your Cart')
     try:
@@ -268,10 +294,20 @@ def cart(browser, gpu):
                 except:
                     time.sleep(delay)
                     browser.find_element_by_class_name('close').click()
+    
+        if gpu['Website'] == 'Amazon':
+            if not checkout(browser, gpu):
+                try:
+                    searchForElement(browser,'text()','Use this').click()
+                    cart(browser,gpu)
+                except Exception as e:
+                    printError('Error in Amazon - Probably couldnt find Use this button')
+                    print(e)
     #TODO: Reorganize this
         if gpu['Website'] == 'BestBuy' or gpu['Website'] == 'ASUS':
             try:
                 browser.find_element_by_xpath("//*[contains(text(), '"+ WebsiteInfo[gpu['Website']]['shippingButton'] + "')]").click()
+                waitForElementToLoad(browser, 'Switch to Pickup')
             except:
                 print('no button to click')
                 check = checkout(browser,gpu)
@@ -405,6 +441,14 @@ def filterLink(browser, GPUList):
             index += 1
 
     #item was added to your cart
+
+def withinRange(msrp,target, r):
+    if target > msrp + r:
+        return False
+    else:
+        return True
+    
+
 '''
     Loops through all open GPU tabs and checks if in stock then switches to the next tab if not in stock
 '''
@@ -413,7 +457,16 @@ def stockCheckLoop(browser, gpu):
     browser.switch_to.window(gpu['WindowHandle']) #open the gpus tab
     browser.refresh()
     try:
-        addToCartBtn = browser.find_element_by_xpath('//button[text()="'+ WebsiteInfo[gpu['Website']]['ISText'] + '"]')
+        if gpu['Website'] == 'Amazon':
+            try:
+                searchForElement(browser,'text()','Buy Now')
+                gpu['price'] = float(browser.find_element_by_id('price_inside_buybox').text.replace('$',''))
+                if withinRange(gpu['MSRP'], gpu['price'],rangeFromMSRP):
+                    addToCartBtn = browser.find_element_by_id('add-to-cart-button')
+            except:
+                raise Exception('Out of Stock: Amazon')
+        else:
+            addToCartBtn = browser.find_element_by_xpath('//button[text()="'+ WebsiteInfo[gpu['Website']]['ISText'] + '"]')
         addToCartBtn.click()
         inStockPrint(gpu)
         res = cart(browser, gpu)
@@ -537,7 +590,7 @@ def seleniumFunc():
 
 def welcomeMessage():
     print(Fore.MAGENTA + Style.BRIGHT + 'WELCOME TO GPU SCALPER v' + versionNumber + ' BY ' + Fore.CYAN +'IDGNFS' + Style.RESET_ALL)
-    print(Fore.GREEN + 'BestBuy ' + Fore.RED + 'Amazon ' + Fore.GREEN + 'NewEgg ' + Fore.RED + 'ASUS ' + Fore.RED + 'Zotac ' + Fore.RED + 'B&H ' + Fore.RED + Fore.RED + 'Adorama ' + Fore.RESET)
+    print(Fore.GREEN + 'BestBuy ' + Fore.GREEN + 'Amazon ' + Fore.GREEN + 'NewEgg ' + Fore.RED + 'ASUS ' + Fore.RED + 'Zotac ' + Fore.RED + 'B&H ' + Fore.RED + Fore.RED + 'Adorama ' + Fore.RESET)
     print('\n')
 
 def userQuestion(question, choices,limit=True,help=None):
