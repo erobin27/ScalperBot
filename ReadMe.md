@@ -30,7 +30,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/erobin27/ScalperBot">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="/Images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">BestBuy GPU Scalper</h3>
@@ -80,7 +80,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]]
 
 I created this scalping bot to get GPUs for my friends at retail price and it was successful so after we no longer needed GPUs I quit updating the project. BestBuy has now implemented more antibot measures and the other websites that it worked on weren't too great.
 
@@ -219,4 +219,4 @@ Thanks crypto miners
 [license-url]: https://github.com/erobin27/ScalperBot/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/elijah-robinson98/
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: /Images/screenshot.png
