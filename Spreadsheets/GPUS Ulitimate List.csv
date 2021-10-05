@@ -1,0 +1,40 @@
+Model,Website,Product,Brand,MSRP,URL
+Ventus 3070,BestBuy,3070,MSI,749.99,https://www.bestbuy.com/site/msi-nvidia-geforce-rtx-3070-ventus-3x-oc-bv-8gb-gddr6-pci-express-4-0-graphics-card/6438278.p?skuId=6438278
+Aorus 3070,BestBuy,3070,GigaByte,649.99,https://www.bestbuy.com/site/gigabyte-nvidia-geforce-rtx-3070-aorus-master-8gb-gddr6-pci-express-4-0-graphics-card/6439384.p?skuId=6439384
+XC3 3070,BestBuy,3070,EVGA,629.99,https://www.bestbuy.com/site/evga-geforce-rtx-3070-xc3-ultra-gaming-8gb-gddr6-pci-express-4-0-graphics-card/6439299.p?skuId=6439299 
+Strix 3070,BestBuy,3070,ASUS,699.99,https://www.bestbuy.com/site/asus-nvidia-geforce-rog-strix-rtx3070-8gb-gddr6-pci-express-4-0-graphics-card-black/6439127.p?skuId=6439127
+TUF 3070,BestBuy,3070,ASUS,649.99,https://www.bestbuy.com/site/asus-nvidia-geforce-tuf-rtx3070-8gb-gddr6-pci-express-4-0-graphics-card-black/6439128.p?skuId=6439128
+Gaming 3070,BestBuy,3070,GigaByte,599.99,https://www.bestbuy.com/site/gigabyte-nvidia-geforce-rtx-3070-gaming-oc-8gb-gddr6-pci-express-4-0-graphics-card/6437909.p?skuId=6437909
+Ventus 3060,BestBuy,3060,MSI,499.99,https://www.bestbuy.com/site/msi-nvidia-geforce-rtx-3060-ventus-3x-12g-oc-12gb-gddr6-pci-express-4-0-graphics-card-black/6452940.p?skuId=6452940
+XC 3060,BestBuy,3060,EVGA,389.99,https://www.bestbuy.com/site/evga-nvidia-geforce-rtx-3060-xc-gaming-12gb-gddr6-pci-express-4-0-graphics-card/6454328.p?skuId=6454328
+Ventus 3060 Ti,BestBuy,3060Ti,MSI,579.99,https://www.bestbuy.com/site/msi-nvidia-geforce-rtx-3060-ti-ventus-2x-oc-bv-8gb-gddr6-pci-express-4-0-graphics-card-black/6441172.p?skuId=6441172
+DUAL 3070,ASUS,3070,ASUS,669.99,https://store.asus.com/us/item/202011AM070000003/graphicscards-ASUS-DUAL-NVIDIA-GeForce-RTX-3070-Gaming-Graphics-Card-%28PCIe-4.0%2C-8GB-GDDR6-memory%2C-HDMI-2.1%2C-DisplayPort-1.4a%2C-Axial-tech-Fan-Design%2C-Dual-BIOS%2C-Protective-Backplate%2C-GPU-Tweak-II%29
+Strix 3070,ASUS,3070,ASUS,779.99,https://store.asus.com/us/item/202010AM310000001/A50243-ASUS-ROG-STRIX-NVIDIA-GeForce-RTX-3070-Gaming-Graphics-Card-%28PCIe-4.0%2C-8GB-GDDR6%2C-HDMI-2.1%2C-DisplayPort-1.4a%2C-Axial-tech-Fan-Design%2C-2.9-slot%2C-Super-Alloy-Power-II%2C-GPU-Tweak-II%29
+Strix 3070 White,ASUS,3070,ASUS,819.99,https://store.asus.com/us/item/202101AM070000001/A50243-ASUS-ROG-STRIX-NVIDIA-GeForce-RTX%E2%84%A2-3070-White-OC-Edition-Gaming-Graphics-Card-%28PCIe-4.0%2C-8GB-GDDR6%2C-HDMI-2.1%2C-DisplayPort-1.4a%2C-White-color-scheme%2C-Axial-tech-Fan-Design%2C-2.9-slot%2C-Super-Alloy-Power-II%29
+XC 3060,Amazon,3060,EVGA,389.99,https://www.amazon.com/EVGA-GeForce-12G-P5-3657-KR-Dual-Fan-Backplate/dp/B08WM28PVH/ref=sr_1_1?dchild=1&keywords=EVGA+3060&qid=1615747037&refinements=p_89%3AEVGA&rnid=2528832011&s=electronics&sr=1-1
+Ventus 3060,Amazon,3060,MSI,469.99,https://www.amazon.com/MSI-GeForce-RTX-3060-12G/dp/B08WPRMVWB/ref=sr_1_3?crid=3LU38JA42Y865&dchild=1&keywords=msi+rtx+3080+ventus+3x+oc&qid=1615747233&refinements=p_89%3AMSI%2Cp_n_condition-type%3A2224371011&rnid=2224369011&s=electronics&sprefix=msi+rtx+3080+ventus%2Celectronics%2C167&sr=1-3
+XC 3060 Ti,Amazon,3060Ti,EVGA,459.99,https://www.amazon.com/dp/B08R876RTH
+X Trio 3060 Ti,Amazon,3060Ti,MSI,579.99,https://www.amazon.com/dp/B08PVYP914
+TUF 3080,Amazon,3080,ASUS,874.99,https://www.amazon.com/ASUS-Graphics-DisplayPort-Military-Grade-Certification/dp/B08HHDP9DW?ref_=ast_sto_dp
+FTW3 3070,Amazon,3070,EVGA,679.99,https://www.amazon.com/Graphics-Technology-Backplate-DisplayPort-Supernova/dp/B08YP4DYFJ/ref=sr_1_6?dchild=1&keywords=3070&qid=1616261640&refinements=p_n_feature_twenty-one_browse-bin%3A21563385011&rnid=21563384011&s=pc&sr=1-6
+XLR8 3070,Amazon,3070,PNY,679.99,https://www.amazon.com/PNY-GeForce-Gaming-Epic-X-Graphics/dp/B08HBJB7YD?ref_=ast_sto_dp
+Dual 3060Ti,Amazon,3060Ti,ASUS,589.99,https://www.amazon.com/dp/B08P2HBBLX/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=si-rtx3060ti-20&linkId=fd711df80fbdeda25af9f4f250f0f9ca&language=en_US
+Eagle 3060Ti,Amazon,3060Ti,GigaByte,399.99,https://www.amazon.com/dp/B08NYNJ6RC/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=si-rtx3060ti-20&linkId=f988783725d70e6c1d557a44e77b5df8&language=en_US
+FTW 3060Ti,Amazon,3060Ti,EVGA,459.99,https://www.amazon.com/dp/B08P2H5LW2/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=si-rtx3060ti-20&linkId=f8d24d0b103c7fd232380af9ce5e82e0&language=en_US
+X Trio 3060Ti,Amazon,3060Ti,MSI,619.99,https://www.amazon.com/dp/B08P2D3JSG/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=si-rtx3060ti-20&linkId=b44d5fcf7367a6952d244883506379d8&language=en_US
+Twin Edge OC 3060Ti,Amazon,3060Ti,Zotac,549.99,https://www.amazon.com/dp/B08P3V572B/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=si-rtx3060ti-20&linkId=d9551b454410bc9c847f8584c5051f59&language=en_US
+Strix 3060Ti,Amazon,3060Ti,ASUS,500,https://www.amazon.com/dp/B083Z7TR8Z/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=si-rtx3060ti-20&linkId=13d11691b7d876dde555b3cfb93983ba&language=en_US
+Ventus 3060Ti,Amazon,3060Ti,MSI,579.99,https://www.amazon.com/dp/B08P2DQ28S/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=si-rtx3060ti-20&linkId=7fd5ff91de0d67fef9114626d8a7249f&language=en_US
+TUF 3070,Amazon,3070,ASUS,649.99,https://www.amazon.com/Gaming-GeForce-Graphics-DisplayPort-Bearings/dp/B08Y9B8L43/ref=sr_1_3?dchild=1&keywords=3070&qid=1616314045&sr=8-3
+Twin Edge OC 3060,Amazon,3060,Zotac,519.99,https://www.amazon.com/ZOTAC-GeForce-Graphics-IceStorm-ZT-A30600H-10M/dp/B08W8DGK3X/ref=sr_1_2?dchild=1&keywords=3070&qid=1616314097&refinements=p_89%3AZOTAC&rnid=2528832011&s=electronics&sr=1-2
+FTW3 3070,Amazon,3070,EVGA,679.99,https://www.amazon.com/Graphics-Technology-Backplate-DisplayPort-Supernova/dp/B08YP4DYFJ/ref=sr_1_5?crid=1PWGCTIZW5LX1&dchild=1&keywords=3070+graphics+card&qid=1616314207&s=electronics&sprefix=3070%2Celectronics%2C169&sr=1-5
+Gaming 3070,Amazon,3070,GigaByte,749.99,https://www.amazon.com/Gigabyte-Graphics-WINDFORCE-Protection-DisplayPort/dp/B08WJJNT2R/ref=sr_1_19?crid=1PWGCTIZW5LX1&dchild=1&keywords=3070+graphics+card&qid=1616314207&s=electronics&sprefix=3070%2Celectronics%2C169&sr=1-19
+Twin Edge OC 3070,Amazon,3070,Zotac,699.99,https://www.amazon.com/dp/B08LF1CWT2?smid=ATVPDKIKX0DER&tag=fixitservices-20
+Ventus 2X OC 3070,Amazon,3070,MSI,749.99,https://www.amazon.com/MSI-GeForce-Graphics-DisplayPort-Ultimate/dp/B08XZQ7ZFV/ref=sr_1_1?crid=1PWGCTIZW5LX1&dchild=1&keywords=3070+graphics+card&qid=1616314483&refinements=p_89%3AMSI&rnid=2528832011&s=electronics&sprefix=3070%2Celectronics%2C169&sr=1-1
+TUF 3060,Amazon,3060,ASUS,519.99,https://www.amazon.com/ASUS-Graphics-DisplayPort-Military-Grade-Certification/dp/B08WHJPBFX/ref=sr_1_1?crid=127HUPHXI3E44&dchild=1&keywords=3060+graphics+card&qid=1616316113&s=electronics&sprefix=3060%2Celectronics%2C162&sr=1-1
+Gaming 3060,Amazon,3060,GigaByte,479.99,https://www.amazon.com/GIGABYTE-GeForce-Graphics-WINDFORCE-GV-N3060GAMING/dp/B08X4V8N5Q/ref=sr_1_4?crid=127HUPHXI3E44&dchild=1&keywords=3060+graphics+card&qid=1616316196&s=electronics&sprefix=3060%2Celectronics%2C162&sr=1-4
+XC 3060,Amazon,3060,EVGA,389.99,https://www.amazon.com/gp/product/B08WM28PVH/ref=ox_sc_act_title_1?smid=ATVPDKIKX0DER&psc=1
+FTW 3060Ti,BestBuy,3060Ti,EVGA,499.99,https://www.bestbuy.com/site/evga-nvidia-geforce-rtx-3060-ti-ftw3-gaming-8gb-gddr6-pci-express-4-0-graphics-card/6444444.p?skuId=6444444
+TUF 3060Ti,BestBuy,3060Ti,ASUS,459.99,https://www.bestbuy.com/site/asus-tuf-rtx3060ti-8gb-gddr6-pci-express-4-0-graphics-card-black/6452573.p?skuId=6452573
+Founders 3060Ti,BestBuy,3060Ti,NVIDIA,399.99,https://www.bestbuy.com/site/nvidia-geforce-rtx-3060-ti-8gb-gddr6-pci-express-4-0-graphics-card-steel-and-black/6439402.p?skuId=6439402
+XC 3060Ti,BestBuy,3060Ti,EVGA,459.99,https://www.bestbuy.com/site/evga-nvidia-geforce-rtx-3060-ti-xc-gaming-8gb-gddr6-pci-express-4-0-graphics-card/6444445.p?skuId=6444445

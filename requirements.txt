@@ -1,0 +1,5 @@
+selenium==3.141.0
+art==5.1
+colorama==0.4.4
+pandas==1.2.3
+playsound==1.2.2

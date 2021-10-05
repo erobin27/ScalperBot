@@ -1,0 +1,14 @@
+MAKE SURE TO CREATE A .csv file titled "checkout.csv" in the Spreadsheets folder
+
+it must contain:
+sec
+123
+
+
+
+
+https://www.zotacstore.com/us/customer/account/login/
+
+https://store.zotac.com/paypal/express/start/
+
+https://store.zotac.com/paypal/express/review/

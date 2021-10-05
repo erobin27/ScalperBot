@@ -8,21 +8,24 @@ import pickle
 import os
 from datetime import datetime
 from art import *   #https://pypi.org/project/art/
+from playsound import playsound
+#import undetected_chromedriver.v2 as uc
 
     
 #Path variables
 driverPATH = os.path.dirname(os.path.realpath(__file__)) + "\chromedriver.exe"    #path to chromedriver for selenium
 checkoutPATH = os.path.dirname(os.path.realpath(__file__)) + '\Spreadsheets\Required\checkout.csv'
 cookiePATH = os.path.dirname(os.path.realpath(__file__)) + '\Cookies\\'
+soundsPATH = os.path.dirname(os.path.realpath(__file__)) + '\Sounds\\'
 
 #Setup Variables
 requiredFolders = ['Cookies','Spreadsheets']
 searchMethod = ['link','page']
-versionNumber = '1.2.5'
+versionNumber = '1.2.71'
 loadCookies = True
 filterList = ['3070','3060','3080','3060Ti']    #no 3090 i am too poor
 WebsiteInfo = {
-	'BestBuy' : {'Color' : 'Blue', 'OOSText' : 'Sold Out', 'ISText' : 'Add to Cart', 'cartLink' : 'https://www.bestbuy.com/checkout/r/fast-track', 'shippingButton':'Switch to Shipping', 'checkoutButtonText':'Checkout', 'ccInputID':'optimized-cc-card-number', 'expMonName':'expiration-month', 'expYearName':'expiration-year', 'ccSec':'credit-card-cvv','fNameInputID':'.firstName','lNameInputID':'.lastName','addrInputID':'.street','cityInputID':'.city','stateInputID':'.state','zipInputID':'.zipcode', 'emailInputID':'email', 'phoneInputID':'phone'},
+	'BestBuy' : {'Color' : 'Blue', 'OOSText' : 'Sold Out', 'ISText' : 'Add to Cart', 'cartLink' : 'https://www.bestbuy.com/checkout/r/fast-track', 'shippingButton':'Switch to Shipping','BottomPageText' : 'Get the latest deals and more.', 'checkoutButtonText':'Checkout', 'ccInputID':'optimized-cc-card-number', 'expMonName':'expiration-month', 'expYearName':'expiration-year', 'ccSec':'credit-card-cvv','fNameInputID':'.firstName','lNameInputID':'.lastName','addrInputID':'.street','cityInputID':'.city','stateInputID':'.state','zipInputID':'.zipcode', 'emailInputID':'email', 'phoneInputID':'phone'},
     'Amazon' : {'Color' : 'Yellow', 'OOSText' : 'NULL', 'ISText' : 'Buy Now', 'cartLink':'https://www.amazon.com/gp/buy/spc/handlers/display.html?hasWorkingJavascript=1'},
 	'NewEgg' : {'Color' : 'Orange', 'OOSText' : 'NULL', 'ISText' : 'Add to cart ', 'emptyCartText':'cart is empty', 'cartLink':'https://secure.newegg.com/shop/cart', 'shippingButton':'Continue With Guest Checkout'},
     'ASUS' : {'Color' : 'Red', 'OOSText' : 'Arrival Notice', 'ISText' : 'Add to Cart', 'cartLink':'https://shop-us1.asus.com/AW000706/checkout', 'shippingButton':'Continue as Guest', 'fNameInputID':'customer-info-1__firstName'}
@@ -35,8 +38,10 @@ cashLimit = 850
 rangeFromMSRP =150
 tabDelay = 2
 delay = .5
-testing = False
+testing = True
 waitAfterCheckout = False
+activeWebsites = []
+antiBot = False
 
 
 '''
@@ -71,6 +76,15 @@ def uniqueElements(path, dtype='column', key='Website'):
         return df[key].unique()
     if dtype == 'headers':
         return list(df.columns.values) 
+
+#Takes a list of dictionaries and returns all unique values for a specific key.
+#i.e. BestBuy, Amazon, Amazon ---- Would return [BestBuy, Amazon]
+def uniqueValues(daDictList, key):
+    uniqueVals = []
+    for daDict in daDictList:
+        if daDict[key] not in uniqueVals:
+            uniqueVals.append(daDict[key])
+    return uniqueVals
 
 def filterDictionary(dictList, filterKey, filterValue, bFilt):
     #cum = list(filter(lambda x: x['Brand'] == 'ASUS', gpuDict))
@@ -109,7 +123,8 @@ def outOfStockPrint(gpu):
 
 def inStockPrint(gpu):
     now = datetime.now()
-    
+    playAlert()
+
     try:
         if testing:
             print('[' + now.strftime("%H:%M:%S") +  '] ' + gpu['Website'] + '_' + gpu['Model'] + " :" + Fore.CYAN + " IN STOCK" + Fore.RESET)
@@ -136,6 +151,18 @@ def purchased(gpu, price):
 #
 #
 '''
+#sets what websites the bot will be on (used to only load specific cookies)
+def setActiveWebsites(spreadsheets):
+    global activeWebsites
+
+    for sheet in spreadsheets:
+        for website in uniqueValues(sheet['gpuDictList'],'Website'):
+            if website not in activeWebsites:
+                activeWebsites.append(website)
+
+def playAlert():
+    playsound(soundsPATH + 'Alert.mp3', False)
+
 #               Called by: seleniumFunc()
 def newTab(browser, gpuDict):
     #if default tab then don't open new one
@@ -157,6 +184,26 @@ def waitForElementToLoad(browser, elemText):
             pageLoaded=True
         except:
             pageLoaded=False
+
+def waitForElementToUnload(browser, elemText, method='text()'):
+    pageLoaded = False
+    print('Begin Please Wait')
+    while not pageLoaded:
+        try:
+            browser.find_element_by_xpath("//*[contains(" + method + ", '"+ elemText + "')]")
+            pageLoaded=False
+        except:
+            pageLoaded=True
+
+def waitForElementToUnloadByClass(browser, className, method='class'):
+    pageLoaded = False
+    print('Begin Please Wait')
+    while not pageLoaded:
+        try:
+            browser.find_element_by_class_name(className)
+            pageLoaded=False
+        except:
+            pageLoaded=True
 
 #               Called by: checkout()
 def selectDropDown(dropdownBox, optionValue):
@@ -206,6 +253,27 @@ def filterPages(browser,p):
         browser.find_element_by_xpath('//button[text()="'+ ' Apply' + '"]').click()
     time.sleep(1)
 
+#               Called by: stockCheckLoop()
+def withinRange(msrp,target, r):
+    if target > msrp + r:
+        return False
+    else:
+        return True
+
+def scrollUntil(browser,BottomPageText, untilText):
+    inView = False
+    count = 0
+    while not inView:
+        browser.execute_script("arguments[0].scrollIntoView();", searchForElement(browser,'text()',BottomPageText))
+        count += 1
+
+        if count == 30:
+            inView = True
+        if searchForElements(browser,'text()',untilText):
+            inView = True
+        else:
+            time.sleep(1)
+
 '''
 #
 #
@@ -235,7 +303,7 @@ def checkout(browser, gpu):
             purchased(gpu, totalPriceInt)
             cashLimit -= totalPriceInt
             print('New Cash Limit is ' + Fore.GREEN + str(cashLimit) + Fore.RESET)
-
+            time.sleep(10)
             if waitAfterCheckout:
                     input('Press Enter to continue')
             return True
@@ -315,6 +383,7 @@ def checkout(browser, gpu):
                 else:
                     print('You have testing enabled, you would have clicked: ' + searchForElement(browser,'text()','Place your order').text)
                 purchased(gpu, totalPriceFloat)
+                time.sleep(10)
                 if waitAfterCheckout:
                     input('Press Enter to continue')
                 return True
@@ -332,7 +401,7 @@ def cart(browser, gpu):
     time.sleep(delay)
     if gpu['Website'] == 'Amazon':
         time.sleep(delay*2)
-    browser.get(WebsiteInfo[gpu['Website']]['cartLink']) #go to the page with your cart
+    browser.get(WebsiteInfo[gpu['Website']]['cartLink']) #go to the page with your cart  
     time.sleep(delay)
     
     #waitForElementToLoad(browser, 'Your Cart')
@@ -367,6 +436,20 @@ def cart(browser, gpu):
                     print(e)
     #TODO: Reorganize this
         if gpu['Website'] == 'BestBuy' or gpu['Website'] == 'ASUS':
+            #If bestbuy has signed you out then sign in
+            if searchForElements(browser,'text()','Verification Code'):
+                playAlert()
+                input('NEED VERIFICATION CODE! Type it in then press enter on console.')
+            if browser.find_elements_by_class_name('listing-footer__paypal-img'):
+                searchForElement(browser,'text()','Checkout').click()
+                waitForElementToLoad(browser,'password')
+                searchForElement(browser,'@type','password').click()
+                searchForElement(browser,'@type','password').send_keys(checkOutInfoDict['password'])
+                time.sleep(1)
+                searchForElement(browser,'@type','password').send_keys(Keys.ENTER)
+                waitForElementToLoad(browser,'Total')
+            
+            
             try:
                 browser.find_element_by_xpath("//*[contains(text(), '"+ WebsiteInfo[gpu['Website']]['shippingButton'] + "')]").click()
                 waitForElementToLoad(browser, 'Switch to Pickup')
@@ -388,24 +471,71 @@ def cart(browser, gpu):
     return True
 
 
+def findInString(main, start, end):
+    return main[main.find(start)+len(start):main.find(end,main.find(start)+len(start))]
+
+
+def amazonPageMethod(browser, gpu):
+    #Scroll every option into view
+    #go through each instock item with an add to cart option
+    #if price is close to MSRP for that product then return True
+    try:
+        scrollUntil(browser,'Back to top','End of list')
+        for instock in searchForElements(browser,'text()','Add to Cart'):
+            href = instock.get_attribute('href')
+            itemID = findInString(href,'registryItemID.1=','&')
+            print(itemID)
+            msrp = float(browser.find_element_by_id('itemComment_' + itemID).text.replace(',',''))
+            price = float(browser.find_element_by_id('itemPrice_' + itemID).text.replace('$','').replace(',',''))
+            if withinRange(msrp, price, rangeFromMSRP):
+                return instock
+
+        return False
+    except Exception as e:
+        printError('Probably could not find any instock items')
+        print(e)
+        return False
+
 #               Called by: seleniumFunc()
 def stockCheckLoop(browser, gpu):
-
     browser.switch_to.window(gpu['WindowHandle']) #open the gpus tab
     browser.refresh()
-    try:
+    try:    #if gpu['Method'] == 'page':
         if gpu['Website'] == 'Amazon':
-            try:
-                searchForElement(browser,'text()','Buy Now')
-                gpu['price'] = float(browser.find_element_by_id('price_inside_buybox').text.replace('$',''))
-                if withinRange(gpu['MSRP'], gpu['price'],rangeFromMSRP):
-                    addToCartBtn = browser.find_element_by_id('add-to-cart-button')
-            except:
-                raise Exception('Out of Stock: Amazon')
+            if gpu['method'] == 'page':
+                if searchForElements(browser,'text()','Enter the characters'):
+                    printError('SOLVE THE CAPTCHA')
+                    time.sleep(60)
+                    browser.refresh()
+                addToCartBtn = amazonPageMethod(browser, gpu)
+            else:
+                try:
+                    searchForElement(browser,'text()','Buy Now')
+                    gpu['price'] = float(browser.find_element_by_id('price_inside_buybox').text.replace('$',''))
+                    if withinRange(gpu['MSRP'], gpu['price'],rangeFromMSRP):
+                        addToCartBtn = browser.find_element_by_id('add-to-cart-button')
+                except:
+                    raise Exception('Out of Stock: Amazon')
         else:
+            if gpu['method'] == 'page':
+                browser.execute_script("arguments[0].scrollIntoView();", searchForElement(browser,'text()',WebsiteInfo[gpu['Website']]['BottomPageText']))
             addToCartBtn = browser.find_element_by_xpath('//button[text()="'+ WebsiteInfo[gpu['Website']]['ISText'] + '"]')
+
+        
+        
+        browser.execute_script("arguments[0].scrollIntoView();", addToCartBtn)
+        print('Button BG before click: ' + addToCartBtn.getCssValue("background"))
         addToCartBtn.click()
         inStockPrint(gpu)
+
+        #Bypass Antibot on bestbuy
+        #Once you click add to cart a message pops up then it says please wait, you wait for the add to cart button to reappear then click it again and continue.
+        if gpu['Website'] == 'BestBuy':
+                if searchForElements(browser, 'text()','This item is not in your cart yet.'):
+                    browser.find_element_by_class_name('btn-primary')
+                    while(True):
+                        print('Button BG after click: ' + addToCartBtn.getCssValue("background"))
+                    browser.find_element_by_class_name('btn-primary').click()
         res = cart(browser, gpu)
 
         #this will keep trying to add item to cart until the item is displayed as out of stock
@@ -423,17 +553,47 @@ def stockCheckLoop(browser, gpu):
 
 #               Called by: start()
 def seleniumFunc():
-    browser = webdriver.Chrome(driverPATH)
+    global antiBot
+    
+    #setup list of currently active websites
+    setActiveWebsites(spreadsheets)
 
-    for cookieFile in os.listdir(cookiePATH):
-        loadCookiesFunc(browser, cookieFile.replace('Cookies.pkl',''))
+    #if zotac and other websites then terminate if just zotac then turn antibot on
+    if 'Zotac' in activeWebsites and len(activeWebsites)>1:
+        printError('Zotac must run solo seperately so that it can bypass cloudflare. Make sure Zotac is the only website selected then try again, or remove Zotac.')
+        terminate()
+    elif 'Zotac' in activeWebsites:
+        antiBot = True
+    
+    if antiBot:
+        browser = uc.Chrome()
+        with browser:
+            browser.get("https://www.zotacstore.com/us/graphics-cards/geforce-rtx-30-series")
+        time.sleep(60)
+    else:
+        browser = webdriver.Chrome(driverPATH)
+
+
+    cookieList = os.listdir(cookiePATH)
+    print('Currently Active Websites: ' + str(activeWebsites))
+    
+    #Load cookies for all websites being used, if the website is
+    #Zotac use antibot chromedriver so that it can bypass cloudflare.
+    for website in activeWebsites:
+        if (website + 'Cookies.pkl') not in cookieList:
+            printError(website + 'does not have a cookie file create one then try again.')
+            terminate()
+        else:
+            loadCookiesFunc(browser, website, antiBot)
+        
+
+    # for cookieFile in os.listdir(cookiePATH):
+    #     loadCookiesFunc(browser, cookieFile.replace('Cookies.pkl',''))
 
     
     #This for loops opens all the tabs and sets up all of the fitlers for each page
     firstLoop = True
     for sheet in spreadsheets:
-        if sheet['method'] == 'link':
-            pass
 
         #open each page
         #close default page
@@ -441,7 +601,8 @@ def seleniumFunc():
             #open the tabs in the dictionary
             newTab(browser, page)
             #add cookies to the tabs if they exist
-            
+            page['method'] = sheet['method']
+
             if sheet['method'] == 'page':
                 filterPages(browser,page)
             
@@ -451,6 +612,9 @@ def seleniumFunc():
             browser.switch_to.window(browser.window_handles[0])
             firstLoop = False
 
+    #REMOVE THIS
+    print('SLEEPING...')
+    time.sleep(30)
     #loop through all open tabs refresh and check for stock
     sheetIndex=0
     loopSheets=True
@@ -596,9 +760,9 @@ def sleepWithCount(amount):
             print('\t' + Fore.RED + str(i) + Fore.RESET, end='\r')
         time.sleep(1)
 
-def loadCookiesFunc(browser, website):
+def loadCookiesFunc(browser, website, bypass=False):
     #open newtab with cookies matching current cookies
-    #load cookies
+    #load cookies   
     try:
         loginPATH = os.path.dirname(os.path.realpath(__file__)) + '\SpreadSheets\Required' + '\LoginPages.csv'
         pageLinks = []
@@ -607,13 +771,23 @@ def loadCookiesFunc(browser, website):
         df.set_index('Website',inplace=True)
 
         loginDict = df.to_dict()['LoginPage']
-        browser.get(loginDict[website])
+        if bypass:
+            with browser:
+                browser.get(loginDict[website])
+                input('Press enter once cloudflare goes away.')
+                print('Loading Cookies for ' + Fore.BLUE + website + Fore.RESET)
+                cookies = pickle.load(open(cookiePATH + website + 'Cookies.pkl',"rb"))
+                for cookie in cookies:
+                    browser.add_cookie(cookie)
+                
+        else:
+            browser.get(loginDict[website])
 
-        print('Loading Cookies for ' + Fore.BLUE + website + Fore.RESET)
+            print('Loading Cookies for ' + Fore.BLUE + website + Fore.RESET)
 
-        cookies = pickle.load(open(cookiePATH + website + 'Cookies.pkl',"rb"))
-        for cookie in cookies:
-            browser.add_cookie(cookie)
+            cookies = pickle.load(open(cookiePATH + website + 'Cookies.pkl',"rb"))
+            for cookie in cookies:
+                browser.add_cookie(cookie)
         
     except Exception as e:
         print(e)
@@ -628,8 +802,19 @@ def createCookies():
     df.set_index('Website',inplace=True)
     loginDict = df.to_dict()['LoginPage']
     res = userQuestion('Which website would you like to save cookies for? enter numbers seperated by spaces.', websites) - 1
-    browser = webdriver.Chrome(driverPATH)
-    browser.get(loginDict[websites[res]])
+    
+    #options = webdriver.ChromeOptions()
+    
+    #browser = webdriver.Chrome(driverPATH,options=options)
+    print(websites[res])
+    if(websites[res] == 'Zotac'):   #if zotac then use cloudflare bypass
+        browser = uc.Chrome()
+        with browser:
+            browser.get(loginDict[websites[res]])
+    else:
+        browser = webdriver.Chrome(driverPATH)
+        browser.get(loginDict[websites[res]])
+    
     print('\n\n ')
     input('Once you finish logging into ' + websites[res] + ' press enter to save your cookies.')
     pickle.dump(browser.get_cookies(), open(os.path.dirname(os.path.realpath(__file__)) + '\Cookies\\' + websites[res] + 'Cookies.pkl',"wb"))
@@ -699,7 +884,7 @@ def settings():
             testing = not testing
         if res == 2:
             loadCookies = not loadCookies
-        if res == 2:
+        if res == 3:
             waitAfterCheckout = not waitAfterCheckout    
         if res == 4:
             cashLimit = int(input('Type in your buy limit: $' + Fore.GREEN).strip())
@@ -790,15 +975,22 @@ def start():
         print('----------------------CHECKOUT DISABLED----------------------')
     seleniumFunc()
 
+#REMOVE THIS
 init()
 start()
 deinit()
 
 
 
+#amazon by page
 
-
-
+#if add to cart exist
+#get add to cart href
+#find the registry item id registryItemID.1=I182T97R9LDQT0&offerin
+#search for element by id (itemPrice_I182T97R9LDQT0) to get the span
+#get the child of that span by class (a-price-whole).text to get price
+#MSRP = by id(itemComment_I2S1039YRBZL8O).text
+#if price < buylimit add to cart
 
 
 
