@@ -80,7 +80,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]]
+![Product Name Screen Shot][product-screenshot]
+![Help][help-screenshot]
+![Settings][settings-screenshot]
 
 I created this scalping bot to get GPUs for my friends at retail price and it was successful so after we no longer needed GPUs I quit updating the project. BestBuy has now implemented more antibot measures and the other websites that it worked on weren't too great.
 
@@ -220,3 +222,5 @@ Thanks crypto miners
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/elijah-robinson98/
 [product-screenshot]: /Images/screenshot.png
+[help-screenshot]: /Images/Help.png
+[settings-screenshot]: /Images/settings.PNG
